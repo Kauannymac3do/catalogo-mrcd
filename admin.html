@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Mercado</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+    <div id="bloqueio-senha" class="tela-login-container">
+        <div class="login-box">
+            <img src="imagens/logo.png" alt="Logo do Mercado" class="mercado-logo" style="margin-bottom: 15px;">
+            <h2>Acesso Restrito</h2>
+            <p>Digite a senha de administrador:</p>
+            <input type="password" id="campo-senha-admin" placeholder="Sua senha aqui...">
+            <button onclick="conferirSenha()" class="btn-salvar" style="margin-top: 10px;">Entrar no Painel</button>
+            <p id="erro-senha" style="color: #ff1616; display: none; font-weight: bold; margin-top: 10px;">⚠️ Senha Incorreta!</p>
+            <br>
+            <a href="index.html" style="color: #004aad; text-decoration: none; font-size: 14px; font-weight: bold;">🛒 Voltar ao Catálogo</a>
+        </div>
+    </div>
+
+    <div id="conteudo-painel" style="display: none;">
+        <header class="mercado-header admin-header">
+            <div class="header-container">
+                <img src="imagens/logo.png" alt="Logo do Mercado" class="mercado-logo">
+                <div class="header-texto">
+                    <h1>Painel do Administrador (Online)</h1>
+                    <p>Gerenciamento de Produtos e Preços</p>
+                </div>
+                <a href="index.html" class="btn-ver-catalogo">🛒 Ver Catálogo</a>
+            </div>
+        </header>
+
+        <div class="container" style="margin-bottom: 0; margin-top: 20px;">
+            <div class="form-cadastro-box" style="padding: 15px 25px;">
+                <label for="busca-codigo" style="font-weight: bold; display: block; margin-bottom: 5px;">🔍 Buscar/Editar por Código de Barras:</label>
+                <input type="text" id="busca-codigo" placeholder="Digite o código de barras para buscar..." oninput="buscarPorCodigoBarras()" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+            </div>
+        </div>
+
+        <main class="container admin-container">
+            <section class="form-cadastro-box">
+                <h2 id="titulo-form">Cadastrar Novo Produto</h2>
+                <form id="form-produto">
+                    <div class="form-grupo">
+                        <label for="codigo">Código de Barras:</label>
+                        <input type="text" id="codigo" placeholder="Ex: 7891234567890" required>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label for="nome">Nome do Produto:</label>
+                        <input type="text" id="nome" placeholder="Ex: Café Fort 500g" required>
+                    </div>
+
+                    <div class="form-grupo-linha">
+                        <div class="form-grupo">
+                            <label for="preco">Preço (R$):</label>
+                            <input type="number" id="preco" step="0.01" placeholder="0.00" required>
+                        </div>
+
+                        <div class="form-grupo">
+                            <label for="categoria">Categoria:</label>
+                            <select id="categoria" required>
+                                <option value="alimentos-basicos">Alimentos Básicos</option>
+                                <option value="matinais">Matinais</option>
+                                <option value="padaria">Padaria</option>
+                                <option value="feira">Feira (Hortifrúti)</option>
+                                <option value="carnes-aves-peixes">Carnes, Aves e Peixes</option>
+                                <option value="frios-laticinios">Frios e Laticínios</option>
+                                <option value="leite">Leite</option>
+                                <option value="leites">Leites</option>
+                                <option value="iogurtes">Iogurtes</option>
+                                <option value="congelados-resfriados">Congelados e Resfriados</option>
+                                <option value="doces-sobremesas">Doces e Sobremesas</option>
+                                <option value="biscoito-salgadinhos">Biscoito e Salgadinhos</option>
+                                <option value="molhos-condimentos-conserva">Molhos, Condimentos e Conserva</option>
+                                <option value="etnicos">Étnicos</option>
+                                <option value="bebidas">Bebidas</option>
+                                <option value="bebidas-alcoolicas">Bebidas Alcoólicas</option>
+                                <option value="suplementos-vitaminas">Suplementos e Vitaminas</option>
+                                <option value="higiene-cuidados-pessoais">Higiene e Cuidados Pessoais</option>
+                                <option value="limpeza">Limpeza</option>
+                                <option value="bazar-utilidades">Bazar e Utilidades</option>
+                                <option value="eletro-eletronicos">Eletro e Eletrônicos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label for="foto-file" id="label-foto">Selecione a foto do produto (dentro de 'imagens'):</label>
+                        <input type="file" id="foto-file" accept="image/*">
+                        <input type="hidden" id="foto-atual">
+                    </div>
+
+                    <button type="submit" class="btn-salvar" id="btn-acao">💾 Salvar Produto</button>
+                    <button type="button" onclick="cancelarEdicao()" class="btn-deletar" id="btn-cancelar" style="width: 100%; margin-top: 10px; display: none; background-color: #718096;">❌ Cancelar Edição</button>
+                </form>
+            </section>
+
+            <section class="lista-admin-box">
+                <h2>Produtos Cadastrados</h2>
+                <div class="tabela-responsiva">
+                    <table class="tabela-produtos">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Foto</th>
+                                <th>Nome</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-corpo"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // COLE AS SUAS CHAVES DO FIREBASE AQUI ABAIXO:
+        const firebaseConfig = {
+  apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
+  authDomain: "mrcd-catalogo.firebaseapp.com",
+  projectId: "mrcd-catalogo",
+  storageBucket: "mrcd-catalogo.firebasestorage.app",
+  messagingSenderId: "856203653174",
+  appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const SENHA_CRIPTOGRAFADA = "bWRjMjNA"; // mdc23@
+        let modoEdicaoId = null; 
+        let listaProdutosLocal = []; // Cache local para buscas rápidas
+
+        window.conferirSenha = function() {
+            const senhaDigitada = document.getElementById('campo-senha-admin').value;
+            const avisoErro = document.getElementById('erro-senha');
+            const senhaConvertida = btoa(senhaDigitada);
+
+            if (senhaConvertida === SENHA_CRIPTOGRAFADA) {
+                document.getElementById('bloqueio-senha').style.display = 'none';
+                document.getElementById('conteudo-painel').style.display = 'block';
+                atualizarTabela();
+            } else {
+                avisoErro.style.display = 'block';
+            }
+        }
+
+        const form = document.getElementById('form-produto');
+        const tabelaCorpo = document.getElementById('tabela-corpo');
+
+        async function atualizarTabela() {
+            tabelaCorpo.innerHTML = '<tr><td colspan="5">Carregando produtos nuvem...</td></tr>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "produtos"));
+                tabelaCorpo.innerHTML = '';
+                listaProdutosLocal = [];
+
+                querySnapshot.forEach((docSnap) => {
+                    const produto = docSnap.data();
+                    const id = docSnap.id;
+                    listaProdutosLocal.push({ id, ...produto });
+
+                    const linha = document.createElement('tr');
+                    linha.innerHTML = `
+                        <td><small>${produto.codigo || 'Sem Cód.'}</small></td>
+                        <td><img src="${produto.foto}" class="mini-foto" onerror="this.src='https://placehold.co/50x50?text=Erro'"></td>
+                        <td><strong>${produto.nome}</strong></td>
+                        <td class="txt-preco">R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}</td>
+                        <td>
+                            <button onclick="carregarParaEditar('${id}')" class="btn-categoria" style="padding: 4px 10px; font-size: 12px; background-color: #ffde59; color: black;">✏️ Editar</button>
+                            <button onclick="deletarProduto('${id}')" class="btn-deletar" style="padding: 4px 10px; font-size: 12px;">❌ Excluir</button>
+                        </td>
+                    `;
+                    tabelaCorpo.appendChild(linha);
+                });
+            } catch (e) {
+                console.error("Erro ao puxar dados: ", e);
+            }
+        }
+
+        window.buscarPorCodigoBarras = function() {
+            const codigoBuscado = document.getElementById('busca-codigo').value.trim();
+            if(!codigoBuscado) return;
+
+            const encontrado = listaProdutosLocal.find(p => p.codigo === codigoBuscado);
+            if (encontrado) {
+                carregarParaEditar(encontrado.id);
+                document.getElementById('busca-codigo').value = '';
+                alert('Produto encontrado e carregado!');
+            }
+        }
+
+        window.carregarParaEditar = function(id) {
+            const produto = listaProdutosLocal.find(p => p.id === id);
+            if(!produto) return;
+
+            modoEdicaoId = id;
+
+            document.getElementById('codigo').value = produto.codigo || '';
+            document.getElementById('nome').value = produto.nome;
+            document.getElementById('preco').value = produto.preco;
+            document.getElementById('categoria').value = produto.categoria;
+            document.getElementById('foto-atual').value = produto.foto;
+
+            document.getElementById('titulo-form').innerText = "✏️ Editando Produto";
+            document.getElementById('btn-acao').innerText = "💾 Salvar Alterações";
+            document.getElementById('btn-cancelar').style.display = "block";
+            document.getElementById('foto-file').required = false;
+            document.getElementById('label-foto').innerText = "Substituir foto (deixe em branco para manter a atual):";
+        }
+
+        window.cancelarEdicao = function() {
+            modoEdicaoId = null;
+            form.reset();
+            document.getElementById('titulo-form').innerText = "Cadastrar Novo Produto";
+            document.getElementById('btn-acao').innerText = "💾 Salvar Produto";
+            document.getElementById('btn-cancelar').style.display = "none";
+            document.getElementById('foto-file').required = true;
+            document.getElementById('label-foto').innerText = "Selecione a foto do produto (dentro de 'imagens'):";
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('foto-file');
+            let caminhoFoto = document.getElementById('foto-atual').value;
+
+            if (fileInput.files.length > 0) {
+                caminhoFoto = "imagens/" + fileInput.files[0].name;
+            }
+
+            const dadosProduto = {
+                codigo: document.getElementById('codigo').value.trim(),
+                nome: document.getElementById('nome').value,
+                preco: document.getElementById('preco').value,
+                categoria: document.getElementById('categoria').value,
+                foto: caminhoFoto
+            };
+
+            try {
+                if (modoEdicaoId !== null) {
+                    const docRef = doc(db, "produtos", modoEdicaoId);
+                    await updateDoc(docRef, dadosProduto);
+                    alert('Produto alterado na nuvem!');
+                } else {
+                    const codigoExiste = listaProdutosLocal.some(p => p.codigo === dadosProduto.codigo);
+                    if (codigoExiste) {
+                        alert('⚠️ Código de barras já cadastrado!');
+                        return;
+                    }
+                    await addDoc(collection(db, "produtos"), dadosProduto);
+                    alert('Produto salvo na nuvem com sucesso!');
+                }
+                cancelarEdicao();
+                atualizarTabela();
+            } catch (error) {
+                alert("Erro ao salvar: " + error.message);
+            }
+        });
+
+        window.deletarProduto = async function(id) {
+            if(confirm('Remover este item definitivamente da nuvem?')) {
+                try {
+                    await deleteDoc(doc(db, "produtos", id));
+                    cancelarEdicao();
+                    atualizarTabela();
+                } catch (error) {
+                    alert("Erro ao deletar: " + error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
