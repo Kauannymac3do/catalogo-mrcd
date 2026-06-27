@@ -22,38 +22,40 @@
 
     <div class="busca-container">
         <div class="busca-box">
-            <input type="text" id="buscador" placeholder="🔍 Digite o que você está procurando..." oninput="buscarProdutos()">
+            <input type="text" id="buscador" placeholder="🔍 Digite o que você está procurando...">
         </div>
     </div>
 
     <div class="categorias-menu-container">
         <div class="categorias-menu" id="menu-botoes">
-            <button class="btn-categoria active" onclick="filtrarPorBotao('todos')">🛒 Todos</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('alimentos-basicos')">Alimentos Básicos</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('matinais')">Matinais</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('padaria')">Padaria</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('feira')">Feira</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('carnes-aves-peixes')">Carnes e Peixes</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('frios-laticinios')">Frios e Laticínios</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('leite')">Leite</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('leites')">Leites</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('iogurtes')">Iogurtes</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('congelados-resfriados')">Congelados</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('doces-sobremesas')">Doces</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('biscoito-salgadinhos')">Biscoitos</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('molhos-condimentos-conserva')">Molhos e Conservas</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('etnicos')">Étnicos</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('bebidas')">Bebidas</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('bebidas-alcoolicas')">Bebidas Alcoólicas</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('suplementos-vitaminas')">Suplementos</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('higiene-cuidados-pessoais')">Higiene</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('limpeza')">Limpeza</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('bazar-utilidades')">Bazar</button>
-            <button class="btn-categoria" onclick="filtrarPorBotao('eletro-eletronicos')">Eletro</button>
+            <button class="btn-categoria active" data-cat="todos">🛒 Todos</button>
+            <button class="btn-categoria" data-cat="alimentos-basicos">Alimentos Básicos</button>
+            <button class="btn-categoria" data-cat="matinais">Matinais</button>
+            <button class="btn-categoria" data-cat="padaria">Padaria</button>
+            <button class="btn-categoria" data-cat="feira">Feira</button>
+            <button class="btn-categoria" data-cat="carnes-aves-peixes">Carnes e Peixes</button>
+            <button class="btn-categoria" data-cat="frios-laticinios">Frios e Laticínios</button>
+            <button class="btn-categoria" data-cat="leite">Leite</button>
+            <button class="btn-categoria" data-cat="leites">Leites</button>
+            <button class="btn-categoria" data-cat="iogurtes">Iogurtes</button>
+            <button class="btn-categoria" data-cat="congelados-resfriados">Congelados</button>
+            <button class="btn-categoria" data-cat="doces-sobremesas">Doces</button>
+            <button class="btn-categoria" data-cat="biscoito-salgadinhos">Biscoitos</button>
+            <button class="btn-categoria" data-cat="molhos-condimentos-conserva">Molhos e Conservas</button>
+            <button class="btn-categoria" data-cat="etnicos">Étnicos</button>
+            <button class="btn-categoria" data-cat="bebidas">Bebidas</button>
+            <button class="btn-categoria" data-cat="bebidas-alcoolicas">Bebidas Alcoólicas</button>
+            <button class="btn-categoria" data-cat="suplementos-vitaminas">Suplementos</button>
+            <button class="btn-categoria" data-cat="higiene-cuidados-pessoais">Higiene</button>
+            <button class="btn-categoria" data-cat="limpeza">Limpeza</button>
+            <button class="btn-categoria" data-cat="bazar-utilidades">Bazar</button>
+            <button class="btn-categoria" data-cat="eletro-eletronicos">Eletro</button>
         </div>
     </div>
 
     <main class="container">
+        <div id="mensagem-carregando" style="text-align: center; font-weight: bold; padding: 2rem; color: #666;">🔄 Atualizando ofertas em tempo real...</div>
+        
         <section class="categoria-secao" id="sec-alimentos-basicos"><h2>Alimentos Básicos</h2><div class="produtos-grid" id="grid-alimentos-basicos"></div></section>
         <section class="categoria-secao" id="sec-matinais"><h2>Matinais</h2><div class="produtos-grid" id="grid-matinais"></div></section>
         <section class="categoria-secao" id="sec-padaria"><h2>Padaria</h2><div class="produtos-grid" id="grid-padaria"></div></section>
@@ -81,7 +83,23 @@
         <p>&copy; 2026 - Todos os direitos reservados.</p>
     </footer>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // COLE AS SUAS CHAVES DO FIREBASE EXATAMENTE IGUAL AO DO ADMIN:
+        const firebaseConfig = {
+  apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
+  authDomain: "mrcd-catalogo.firebaseapp.com",
+  projectId: "mrcd-catalogo",
+  storageBucket: "mrcd-catalogo.firebasestorage.app",
+  messagingSenderId: "856203653174",
+  appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const listaCategorias = [
             'bebidas-alcoolicas', 'etnicos', 'eletro-eletronicos', 'congelados-resfriados', 
             'padaria', 'leites', 'suplementos-vitaminas', 'frios-laticinios', 'doces-sobremesas', 
@@ -90,52 +108,68 @@
             'alimentos-basicos', 'bebidas', 'leite', 'matinais'
         ];
 
+        let todosOsProdutos = [];
         let categoriaSelecionada = 'todos';
 
-        function carregarProdutos() {
-            const produtos = JSON.parse(localStorage.getItem('produtos_mercado')) || [];
-            
+        async function carregarProdutosOnline() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "produtos"));
+                todosOsProdutos = [];
+                
+                querySnapshot.forEach((doc) => {
+                    todosOsProdutos.push(doc.data());
+                });
+
+                // Remove o aviso de "Carregando"
+                const msgCarregando = document.getElementById('mensagem-carregando');
+                if(msgCarregando) msgCarregando.style.display = 'none';
+
+                renderizarProdutosNaTela();
+            } catch (error) {
+                document.getElementById('mensagem-carregando').innerText = "⚠️ Erro ao atualizar os produtos. Verifique as chaves ou conexão.";
+                console.error(error);
+            }
+        }
+
+        function renderizarProdutosNaTela() {
+            // Limpa todos os grids antes de desenhar
             listaCategorias.forEach(cat => {
                 const grid = document.getElementById(`grid-${cat}`);
                 if(grid) grid.innerHTML = '';
             });
 
-            produtos.forEach(produto => {
-                const card = `
+            const termoBusca = document.getElementById('buscador').value.toLowerCase().trim();
+
+            // Distribui os produtos vindos da Nuvem nos seus respectivos blocos
+            todosOsProdutos.forEach(produto => {
+                const nomeProduto = produto.nome.toLowerCase();
+                
+                // Filtro por Texto Digitado
+                if (termoBusca && !nomeProduto.includes(termoBusca)) {
+                    return; // Pula este produto se ele não bater com a busca
+                }
+
+                const cardHTML = `
                     <div class="produto-card">
                         <img src="${produto.foto}" alt="${produto.nome}" class="produto-foto" onerror="this.src='https://placehold.co/160x160?text=Sem+Foto'">
                         <h3 class="produto-nome">${produto.nome}</h3>
                         <p class="produto-preco">R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}</p>
                     </div>
                 `;
+
                 const gridAlvo = document.getElementById(`grid-${produto.categoria}`);
-                if (gridAlvo) gridAlvo.innerHTML += card;
+                if (gridAlvo) gridAlvo.innerHTML += cardHTML;
             });
 
-            aplicarFiltrosVisuais();
-        }
-
-        // Controla o que aparece dependendo do botão clicado e da busca por texto
-        function aplicarFiltrosVisuais() {
-            const termoBusca = document.getElementById('buscador').value.toLowerCase();
-            const cards = document.querySelectorAll('.produto-card');
-
-            // Primeiro filtra os cards individuais pelo texto digitado
-            cards.forEach(card => {
-                const nomeProduto = card.querySelector('.produto-nome').innerText.toLowerCase();
-                card.style.display = nomeProduto.includes(termoBusca) ? 'block' : 'none';
-            });
-
-            // Depois decide quais seções inteiras aparecem
+            // Gerencia quais seções de título (H2) devem aparecer ou sumir
             listaCategorias.forEach(cat => {
                 const secao = document.getElementById(`sec-${cat}`);
                 const grid = document.getElementById(`grid-${cat}`);
                 
                 if (grid && secao) {
-                    const temProdutoVisivel = Array.from(grid.children).some(child => child.style.display !== 'none');
+                    const temProdutosNesteGrid = grid.children.length > 0;
                     
-                    // Se o botão selecionado for 'todos' ou for a categoria atual, E tiver itens visíveis
-                    if ((categoriaSelecionada === 'todos' || categoriaSelecionada === cat) && temProdutoVisivel && grid.children.length > 0) {
+                    if ((categoriaSelecionada === 'todos' || categoriaSelecionada === cat) && temProdutosNesteGrid) {
                         secao.style.display = 'block';
                     } else {
                         secao.style.display = 'none';
@@ -144,27 +178,24 @@
             });
         }
 
-        // Função chamada quando clica em algum botão de categoria
-        function filtrarPorBotao(categoria) {
-            categoriaSelecionada = categoria;
+        // Evento para monitorar a digitação na busca
+        document.getElementById('buscador').addEventListener('input', renderizarProdutosNaTela);
 
-            // Altera o estilo do botão ativo (Amarelo)
-            const botoes = document.querySelectorAll('.btn-categoria');
-            botoes.forEach(btn => btn.classList.remove('active'));
-            
-            // Procura qual botão foi clicado para adicionar a classe ativa
-            event.target.classList.add('active');
+        // Evento para monitorar cliques nos botões de categorias
+        const botoes = document.querySelectorAll('.btn-categoria');
+        botoes.forEach(botao => {
+            botao.addEventListener('click', (e) => {
+                botoes.forEach(btn => btn.classList.remove('active'));
+                
+                e.currentTarget.classList.add('active');
+                categoriaSelecionada = e.currentTarget.getAttribute('data-cat');
+                
+                renderizarProdutosNaTela();
+            });
+        });
 
-            aplicarFiltrosVisuais();
-        }
-
-        function buscarProdutos() {
-            aplicarFiltrosVisuais();
-        }
-
-        window.onload = carregarProdutos;
+        // Inicia puxando os dados da internet assim que o site abre
+        window.onload = carregarProdutosOnline;
     </script>
-
-
 </body>
 </html>
