@@ -87,15 +87,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        // COLE AS SUAS CHAVES DO FIREBASE EXATAMENTE IGUAL AO DO ADMIN:
+        // CONFIGURAÇÕES ATIVAS DO FIREBASE DO MERCADO HELO REAL
         const firebaseConfig = {
-  apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
-  authDomain: "mrcd-catalogo.firebaseapp.com",
-  projectId: "mrcd-catalogo",
-  storageBucket: "mrcd-catalogo.firebasestorage.app",
-  messagingSenderId: "856203653174",
-  appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
-};
+            apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
+            authDomain: "mrcd-catalogo.firebaseapp.com",
+            projectId: "mrcd-catalogo",
+            storageBucket: "mrcd-catalogo.firebasestorage.app",
+            messagingSenderId: "856203653174",
+            appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -138,14 +138,23 @@
                 if(grid) grid.innerHTML = '';
             });
 
-            const termoBusca = document.getElementById('buscador').value.toLowerCase().trim();
+            // Coleta o termo digitado, remove acentos e deixa em letras minúsculas
+            const termoBusca = document.getElementById('buscador').value
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim();
 
             // Distribui os produtos vindos da Nuvem nos seus respectivos blocos
             todosOsProdutos.forEach(produto => {
-                const nomeProduto = produto.nome.toLowerCase();
+                // Remove os acentos do nome do produto também para a comparação funcionar
+                const nomeProdutoSemAcento = produto.nome
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, "");
                 
-                // Filtro por Texto Digitado
-                if (termoBusca && !nomeProduto.includes(termoBusca)) {
+                // Filtro por Texto Digitado (Ignorando Acentuações)
+                if (termoBusca && !nomeProdutoSemAcento.includes(termoBusca)) {
                     return; // Pula este produto se ele não bater com a busca
                 }
 
