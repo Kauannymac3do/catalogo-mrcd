@@ -137,6 +137,21 @@ body {
     padding: 0 20px;
 }
 
+.link-admin-discreto {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4); /* Fica quase invisível, misturado ao rodapé */
+    text-decoration: none;
+    transition: var(--transicao-fluida);
+}
+
+.link-admin-discreto:hover {
+    color: var(--color-accent); /* Só brilha em amarelo se passar o mouse em cima */
+    text-decoration: underline;
+}
+
+
 /* ==========================================================================
    CAMPO DE BUSCA
    ========================================================================== */
