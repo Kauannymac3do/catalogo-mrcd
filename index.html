@@ -17,6 +17,7 @@
                 <p class="contato">📞 WhatsApp: (11) 93953-2362</p>
             </div>
             <a href="admin.html" class="btn-admin-acesso">⚙️ Painel Admin</a>
+            <div id="status-loja" class="status-badge">🔄 Verificando horário...</div>
         </div>
     </header>
 
@@ -82,6 +83,8 @@
     <footer class="mercado-footer">
         <p>&copy; 2026 - Todos os direitos reservados.</p>
     </footer>
+
+    <a href="https://wa.me/5511911873381?text=Olá!%20Vi%20o%20catálogo%20e%20gostaria de%20tirar%20uma%20dúvida." class="btn-whatsapp-flutuante" target="_blank" rel="noopener noreferrer"> <img src="imagens/whatsapp.png" alt="Whatsapp Comercial"></a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
@@ -203,8 +206,41 @@
             });
         });
 
+         function verificarHorarioFuncionamento() {
+            const agora = new Date();
+            const hora = agora.getHours();
+            const diaSemana = agora.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+            const badge = document.getElementById('status-loja');
+
+            if (!badge) return;
+
+            let aberto = false;
+
+            if (diaSemana === 0) { 
+                // Domingo: 7h às 18h
+                if (hora >= 7 && hora < 18) aberto = true;
+            } else if (diaSemana === 6) { 
+                // Sábado: 7h às 22h
+                if (hora >= 7 && hora < 22) aberto = true;
+            } else { 
+                // Segunda a Sexta: 6h às 22h
+                if (hora >= 6 && hora < 22) aberto = true;
+            }
+
+            // Altera o visual da etiqueta baseado no resultado
+            if (aberto) {
+                badge.innerText = "🟢 Estamos Abertos!";
+                badge.className = "status-badge aberto";
+            } else {
+                badge.innerText = "🔴 Fechado no momento";
+                badge.className = "status-badge fechado";
+            }
+        }
+
         // Inicia puxando os dados da internet assim que o site abre
-        window.onload = carregarProdutosOnline;
+        window.onload =() => { carregarProdutosOnline();
+            verificarHorarioFuncionamento();
+        }
     </script>
 </body>
 </html>
