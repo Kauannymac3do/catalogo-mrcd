@@ -1,6 +1,3 @@
-/* ==========================================================================
-   VARIÁVEIS GLOBAIS (Design System)
-   ========================================================================== */
 :root {
     /* Cores */
     --color-primary: #004aad;
@@ -11,34 +8,36 @@
     --color-accent-hover: #e5c74f;
     --color-bg-main: #f4f6f9;
     --color-bg-card: #ffffff;
-    --color-text-dark: #333333;
-    --color-text-muted: #555555;
+    --color-text-dark: #212529; /* Otimizado para melhor contraste/acessibilidade */
+    --color-text-muted: #595959; /* Garante taxa de contraste > 4.5:1 */
     --color-border: #e0e0e0;
 
     /* Tipografia e Efeitos */
-    --font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; /* Font stack moderna e mais leve */
     --radius-sm: 4px;
     --radius-md: 6px;
     --radius-lg: 12px;
-    --radius-full: 30px;
+    --radius-full: 9999px; /* Garante formato pílula independente do tamanho */
     --transition-fast: 0.2s ease;
     --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.03);
 }
 
-/* Reset básico e melhoria de renderização */
+/* Reset moderno e melhoria de renderização */
 *, *::before, *::after {
     box-sizing: border-box;
+    margin: 0; /* Zera margens globalmente para evitar surpresas */
+    padding: 0; /* Zera paddings globalmente */
 }
 
 body {
     font-family: var(--font-stack);
-    margin: 0;
-    padding: 0;
     background-color: var(--color-bg-main);
     color: var(--color-text-dark);
-    line-height: 1.5; /* Melhora a leitura */
+    line-height: 1.6; /* 1.6 é o padrão ouro para legibilidade Web WCAG */
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; /* Suporte para renderização em Firefox/Mac */
+    min-height: 100vh; /* Garante que o body ocupe a tela toda */
 }
 
 /* ==========================================================================
@@ -46,8 +45,8 @@ body {
    ========================================================================== */
 .mercado-header {
     background-color: var(--color-primary);
-    color: white;
-    padding: 20px 0;
+    color: #ffffff;
+    padding: 1.25rem 0; /* Convertido para rem */
     border-bottom: 5px solid var(--color-secondary);
 }
 
@@ -57,18 +56,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 1.25rem; /* Convertido para rem */
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 1.25rem; /* Convertido para rem */
 }
 
 .mercado-logo {
     max-height: 80px;
     width: auto;
     border-radius: var(--radius-md);
-    background-color: white;
+    background-color: #ffffff;
     padding: 5px;
-    object-fit: contain; /* Garante que a imagem não distorça */
+    object-fit: contain;
+    display: block; /* Remove espaçamentos fantasmas de elementos inline */
 }
 
 .header-texto {
@@ -77,15 +77,16 @@ body {
 }
 
 .header-texto h1 {
-    margin: 0 0 5px 0;
     font-size: 1.625rem; /* 26px */
+    line-height: 1.2; /* Títulos grandes precisam de menos espaçamento entre linhas */
+    margin-bottom: 0.3125rem;
 }
 
 .header-texto p {
-    margin: 3px 0;
     font-size: 0.875rem; /* 14px */
-    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.9); /* Melhor do que usar opacity no elemento todo */
 }
+
 
 /* ==========================================================================
    BOTÕES DE NAVEGAÇÃO
@@ -289,53 +290,6 @@ body {
     margin: 10px 0;
     letter-spacing: -0.5px;
 }
-
-/* Ajuste no botão Adicionar */
-.produto-card::after {
-    content: "🛒 Adicionar";
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background-color: #25d366;
-    color: white;
-    padding: 12px 0; /* Botão mais gordinho e fácil de clicar */
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 15px;
-    margin-top: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(37, 211, 102, 0.15);
-    transition: background 0.2s, transform 0.1s;
-}
-
-.produto-card:hover::after {
-    background-color: #1ebd58;
-}
-
-.produto-card:active::after {
-    transform: scale(0.98); /* Efeito de clique físico no botão */
-}
-
-/* NOVO: Botão de simulação de compra direto no card */
-.produto-card::after {
-    content: "🛒 Adicionar";
-    display: block;
-    width: 100%;
-    background-color: #25d366; /* Verde WhatsApp / Sucesso */
-    color: white;
-    padding: 10px 0;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.produto-card:hover::after {
-    background-color: #1ebd58; /* Escurece o verde no foco */
-}
 /* ==========================================================================
    PAINEL DO ADMINISTRADOR
    ========================================================================== */
@@ -515,3 +469,88 @@ transition: background var(--transition-fast);}.btn-deletar:hover,.btn-deletar:f
 .login-box input:focus {
     border-color: #ff1616; /* Borda fica vermelha ao clicar */
 }
+
+/* ==========================================================================
+   9. BOTÃO FLUTUANTE DO WHATSAPP
+   ========================================================================== */
+.btn-whatsapp-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #25d366;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+    z-index: 1000;
+    transition: var(--transicao-fluida);
+    animation: pulsarBotao 2s infinite;
+}
+
+.btn-whatsapp-flutuante img {
+    width: 32px;
+    height: 32px;
+}
+
+/* Efeito ao passar o mouse ou tocar */
+.btn-whatsapp-flutuante:hover {
+    transform: scale(1.1) translateY(-4px);
+    background-color: #20ba5a;
+    box-shadow: 0 8px 24px rgba(32, 186, 90, 0.45);
+}
+
+/* Animação sutil de pulso para chamar atenção do cliente */
+@keyframes pulsarBotao {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+/* Ajuste para telas pequenas não cobrir o conteúdo do último card */
+@media (max-width: 480px) {
+    .btn-whatsapp-flutuante {
+        width: 52px;
+        height: 52px;
+        bottom: 15px;
+        right: 15px;
+    }
+    .btn-whatsapp-flutuante img {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* ==========================================================================
+   10. INDICADOR ABERTO / FECHADO
+   ========================================================================== */
+.status-badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 20px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: var(--transicao-fluida);
+}
+
+.status-badge.aberto {
+    background-color: #25d366; /* Verde vibrante */
+    box-shadow: 0 0 10px rgba(37, 211, 102, 0.4);
+}
+
+.status-badge.fechado {
+    background-color: #ff1616; /* Vermelho */
+    box-shadow: 0 0 10px rgba(255, 22, 22, 0.4);
+}
+
