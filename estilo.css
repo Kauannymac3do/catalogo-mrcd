@@ -105,18 +105,6 @@ body {
     cursor: pointer;
 }
 
-.btn-admin-acesso {
-    background-color: var(--color-accent);
-    color: #000;
-    border: 2px solid var(--color-accent);
-}
-
-.btn-admin-acesso:hover,
-.btn-admin-acesso:focus-visible {
-    background-color: var(--color-accent-hover);
-    border-color: var(--color-accent-hover);
-    outline: none;
-}
 
 .btn-ver-catalogo {
     background-color: transparent;
