@@ -127,7 +127,7 @@ body {
 
 .link-admin-discreto {
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.4); /* Fica quase invisível, misturado ao rodapé */
     text-decoration: none;
