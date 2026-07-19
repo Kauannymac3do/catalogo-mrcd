@@ -105,7 +105,6 @@ body {
     cursor: pointer;
 }
 
-
 .btn-ver-catalogo {
     background-color: transparent;
     color: white;
@@ -131,7 +130,7 @@ body {
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.4); /* Fica quase invisível, misturado ao rodapé */
     text-decoration: none;
-    transition: var(--transicao-fluida);
+    transition: color var(--transition-fast);
 }
 
 .link-admin-discreto:hover {
@@ -293,6 +292,7 @@ body {
     margin: 10px 0;
     letter-spacing: -0.5px;
 }
+
 /* ==========================================================================
    PAINEL DO ADMINISTRADOR
    ========================================================================== */
@@ -315,6 +315,7 @@ body {
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-md);
+    min-width: 0; /* IMPEDE QUE CONTEÚDOS INTERNOS ESTOUREM O ESPAÇO DO GRID */
 }
 
 .form-cadastro-box h2, 
@@ -380,6 +381,7 @@ body {
 
 /* Tabela Admin */
 .tabela-responsiva {
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
@@ -403,6 +405,14 @@ body {
     color: var(--color-text-dark);
 }
 
+/* Organiza os botões de ação para não quebrarem a tabela */
+.tabela-produtos td:last-child {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap; 
+    min-width: 130px;
+}
+
 .mini-foto {
     width: 50px;
     height: 50px;
@@ -422,7 +432,27 @@ body {
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 0.75rem;
-transition: background var(--transition-fast);}.btn-deletar:hover,.btn-deletar:focus-visible {background-color: var(--color-secondary-hover);outline: none;}/* ==========================================================================RODAPÉ========================================================================== */.mercado-footer {text-align: center;padding: 20px;background-color: var(--color-primary);color: white;font-size: 0.875rem;margin-top: 60px;border-top: 4px solid var(--color-accent);}
+    transition: background var(--transition-fast);
+}
+
+.btn-deletar:hover,
+.btn-deletar:focus-visible {
+    background-color: var(--color-secondary-hover);
+    outline: none;
+}
+
+/* ==========================================================================
+   RODAPÉ
+   ========================================================================== */
+.mercado-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 0.875rem;
+    margin-top: 60px;
+    border-top: 4px solid var(--color-accent);
+}
 
 .tela-login-container {
     position: fixed;
@@ -487,9 +517,9 @@ transition: background var(--transition-fast);}.btn-deletar:hover,.btn-deletar:f
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+    box-shadow: 0 4px 166px rgba(37, 211, 102, 0.3);
     z-index: 1000;
-    transition: var(--transicao-fluida);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
     animation: pulsarBotao 2s infinite;
 }
 
@@ -544,7 +574,7 @@ transition: background var(--transition-fast);}.btn-deletar:hover,.btn-deletar:f
     border-radius: 20px;
     color: white;
     background-color: rgba(255, 255, 255, 0.2);
-    transition: var(--transicao-fluida);
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .status-badge.aberto {
@@ -556,4 +586,3 @@ transition: background var(--transition-fast);}.btn-deletar:hover,.btn-deletar:f
     background-color: #ff1616; /* Vermelho */
     box-shadow: 0 0 10px rgba(255, 22, 22, 0.4);
 }
-
