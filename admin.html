@@ -15,9 +15,9 @@
             <p>Digite a senha de administrador:</p>
             <input type="password" id="campo-senha-admin" placeholder="Sua senha aqui...">
             <button onclick="conferirSenha()" class="btn-salvar" style="margin-top: 10px;">Entrar no Painel</button>
-            <p id="erro-senha" style="color: #ff1616; display: none; font-weight: bold; margin-top: 10px;">⚠️ Senha Incorreta!</p>
+            <p id="erro-senha" style="color: #ff1616; display: none; font-weight: bold; margin-top: 10px;">Senha Incorreta!</p>
             <br>
-            <a href="index.html" style="color: #004aad; text-decoration: none; font-size: 14px; font-weight: bold;">🛒 Voltar ao Catálogo</a>
+            <a href="index.html" style="color: #004aad; text-decoration: none; font-size: 14px; font-weight: bold;">Voltar ao Catálogo</a>
         </div>
     </div>
 
@@ -29,13 +29,13 @@
                     <h1>Painel do Administrador (Online)</h1>
                     <p>Gerenciamento de Produtos e Preços</p>
                 </div>
-                <a href="index.html" class="btn-ver-catalogo">🛒 Ver Catálogo</a>
+                <a href="index.html" class="btn-ver-catalogo">Ver Catálogo</a>
             </div>
         </header>
 
         <div class="container" style="margin-bottom: 0; margin-top: 20px;">
             <div class="form-cadastro-box" style="padding: 15px 25px;">
-                <label for="busca-codigo" style="font-weight: bold; display: block; margin-bottom: 5px;">🔍 Buscar/Editar por Código de Barras:</label>
+                <label for="busca-codigo" style="font-weight: bold; display: block; margin-bottom: 5px;">Buscar/Editar por Código de Barras:</label>
                 <input type="text" id="busca-codigo" placeholder="Digite o código de barras para buscar..." oninput="buscarPorCodigoBarras()" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
             </div>
         </div>
@@ -45,13 +45,13 @@
                 <h2 id="titulo-form">Cadastrar Novo Produto</h2>
                 <form id="form-produto">
                     <div class="form-grupo">
-                        <label for="codigo">Código de Barras:</label>
-                        <input type="text" id="codigo" placeholder="Ex: 7891234567890" >
+                        <label for="codigo">Código de Barras (Opcional):</label>
+                        <input type="text" id="codigo" placeholder="Ex: 7891234567890 (Deixe em branco para itens por kg)">
                     </div>
 
                     <div class="form-grupo">
                         <label for="nome">Nome do Produto:</label>
-                        <input type="text" id="nome" placeholder="Ex: Café Fort 500g" required>
+                        <input type="text" id="nome" placeholder="Ex: Tomate Italiano - kg ou Banana Prata - Dúzia" required>
                     </div>
 
                     <div class="form-grupo-linha">
@@ -90,12 +90,12 @@
 
                     <div class="form-grupo">
                         <label for="foto-file" id="label-foto">Selecione a foto do produto (dentro de 'imagens'):</label>
-                        <input type="file" id="foto-file" accept="image/*">
+                        <input type="file" id="foto-file" accept="image/*" required>
                         <input type="hidden" id="foto-atual">
                     </div>
 
-                    <button type="submit" class="btn-salvar" id="btn-acao">💾 Salvar Produto</button>
-                    <button type="button" onclick="cancelarEdicao()" class="btn-deletar" id="btn-cancelar" style="width: 100%; margin-top: 10px; display: none; background-color: #718096;">❌ Cancelar Edição</button>
+                    <button type="submit" class="btn-salvar" id="btn-acao">Salvar Produto</button>
+                    <button type="button" onclick="cancelarEdicao()" class="btn-deletar" id="btn-cancelar" style="width: 100%; margin-top: 10px; display: none; background-color: #718096;">Cancelar Edição</button>
                 </form>
             </section>
 
@@ -121,24 +121,23 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        // COLE AS SUAS CHAVES DO FIREBASE AQUI ABAIXO:
         const firebaseConfig = {
-  apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
-  authDomain: "mrcd-catalogo.firebaseapp.com",
-  projectId: "mrcd-catalogo",
-  storageBucket: "mrcd-catalogo.firebasestorage.app",
-  messagingSenderId: "856203653174",
-  appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
-};
+            apiKey: "AIzaSyD-TOoccwJZ_Sc5q9UsBcIzK4cY5MeuxBU",
+            authDomain: "mrcd-catalogo.firebaseapp.com",
+            projectId: "mrcd-catalogo",
+            storageBucket: "mrcd-catalogo.firebasestorage.app",
+            messagingSenderId: "856203653174",
+            appId: "1:856203653174:web:8c9173d68e7e4bec89e897"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         const SENHA_CRIPTOGRAFADA = "bWRjMjNA"; // mdc23@
         let modoEdicaoId = null; 
-        let listaProdutosLocal = []; // Cache local para buscas rápidas
+        let listaProdutosLocal = [];
 
         window.conferirSenha = function() {
             const senhaDigitada = document.getElementById('campo-senha-admin').value;
@@ -158,7 +157,7 @@
         const tabelaCorpo = document.getElementById('tabela-corpo');
 
         async function atualizarTabela() {
-            tabelaCorpo.innerHTML = '<tr><td colspan="5">Carregando produtos nuvem...</td></tr>';
+            tabelaCorpo.innerHTML = '<tr><td colspan="5">Carregando produtos da nuvem...</td></tr>';
             try {
                 const querySnapshot = await getDocs(collection(db, "produtos"));
                 tabelaCorpo.innerHTML = '';
@@ -176,8 +175,8 @@
                         <td><strong>${produto.nome}</strong></td>
                         <td class="txt-preco">R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}</td>
                         <td>
-                            <button onclick="carregarParaEditar('${id}')" class="btn-categoria" style="padding: 4px 10px; font-size: 12px; background-color: #ffde59; color: black;">✏️ Editar</button>
-                            <button onclick="deletarProduto('${id}')" class="btn-deletar" style="padding: 4px 10px; font-size: 12px;">❌ Excluir</button>
+                            <button onclick="carregarParaEditar('${id}')" class="btn-categoria" style="padding: 4px 10px; font-size: 12px; background-color: #ffde59; color: black;">Editar</button>
+                            <button onclick="deletarProduto('${id}')" class="btn-deletar" style="padding: 4px 10px; font-size: 12px;">Excluir</button>
                         </td>
                     `;
                     tabelaCorpo.appendChild(linha);
@@ -211,8 +210,8 @@
             document.getElementById('categoria').value = produto.categoria;
             document.getElementById('foto-atual').value = produto.foto;
 
-            document.getElementById('titulo-form').innerText = "✏️ Editando Produto";
-            document.getElementById('btn-acao').innerText = "💾 Salvar Alterações";
+            document.getElementById('titulo-form').innerText = "Editando Produto";
+            document.getElementById('btn-acao').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar').style.display = "block";
             document.getElementById('foto-file').required = false;
             document.getElementById('label-foto').innerText = "Substituir foto (deixe em branco para manter a atual):";
@@ -222,7 +221,7 @@
             modoEdicaoId = null;
             form.reset();
             document.getElementById('titulo-form').innerText = "Cadastrar Novo Produto";
-            document.getElementById('btn-acao').innerText = "💾 Salvar Produto";
+            document.getElementById('btn-acao').innerText = "Salvar Produto";
             document.getElementById('btn-cancelar').style.display = "none";
             document.getElementById('foto-file').required = true;
             document.getElementById('label-foto').innerText = "Selecione a foto do produto (dentro de 'imagens'):";
@@ -236,12 +235,15 @@
 
             if (fileInput.files.length > 0) {
                 caminhoFoto = "imagens/" + fileInput.files[0].name;
+            } else if (!modoEdicaoId) {
+                alert("Por favor, selecione uma imagem para o novo produto.");
+                return;
             }
 
             const dadosProduto = {
                 codigo: document.getElementById('codigo').value.trim(),
-                nome: document.getElementById('nome').value,
-                preco: document.getElementById('preco').value,
+                nome: document.getElementById('nome').value.trim(),
+                preco: parseFloat(document.getElementById('preco').value),
                 categoria: document.getElementById('categoria').value,
                 foto: caminhoFoto
             };
@@ -252,10 +254,12 @@
                     await updateDoc(docRef, dadosProduto);
                     alert('Produto alterado na nuvem!');
                 } else {
-                    const codigoExiste = listaProdutosLocal.some(p => p.codigo === dadosProduto.codigo);
-                    if (codigoExiste) {
-                        alert('⚠️ Código de barras já cadastrado!');
-                        return;
+                    if (dadosProduto.codigo !== "") {
+                        const codigoExiste = listaProdutosLocal.some(p => p.codigo === dadosProduto.codigo);
+                        if (codigoExiste) {
+                            alert('Código de barras já cadastrado!');
+                            return;
+                        }
                     }
                     await addDoc(collection(db, "produtos"), dadosProduto);
                     alert('Produto salvo na nuvem com sucesso!');
@@ -279,7 +283,7 @@
             }
         }
 
-         const campoSenha = document.querySelector('.login-box input');
+        const campoSenha = document.getElementById('campo-senha-admin');
         campoSenha.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
